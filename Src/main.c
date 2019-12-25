@@ -98,7 +98,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  printf("MCU start. FW build time: %s\n\r", __TIME__);
   /* USER CODE END 2 */
 
   osKernelInitialize();
