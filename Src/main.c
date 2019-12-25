@@ -283,7 +283,23 @@ static void MX_GPIO_Init(void)
 void StartDefaultTask(void *argument)
 {
   /* init code for LWIP */
+  extern struct netif gnetif;
+
+  /* Turn off ETH LED */
+  HAL_GPIO_WritePin(ETH_UP_LED_GPIO_Port, ETH_UP_LED_Pin, GPIO_PIN_SET);
+  
+  /* Set ETH RST Pin to start PHY */
+  HAL_GPIO_WritePin(ETH_RST_GPIO_Port, ETH_RST_Pin, GPIO_PIN_SET);
+
   MX_LWIP_Init();
+  
+  /* Wait here until get IP */
+  while(gnetif.ip_addr.addr == 0) osDelay(1);
+
+  /* Turn on ETH LED and print IP address */  
+  HAL_GPIO_WritePin(ETH_UP_LED_GPIO_Port, ETH_UP_LED_Pin, GPIO_PIN_RESET);
+  printf("IP addr: %s\n\r", ip4addr_ntoa(&gnetif.ip_addr));
+  
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
   for(;;)

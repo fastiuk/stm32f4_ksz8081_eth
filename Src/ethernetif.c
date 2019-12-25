@@ -201,12 +201,15 @@ static void low_level_init(struct netif *netif)
 { 
   HAL_StatusTypeDef hal_eth_init_status;
   osThreadAttr_t attributes;
+  uint32_t val;
   
 /* Init ETH */
 
    uint8_t MACAddr[6] ;
   heth.Instance = ETH;
-  heth.Init.AutoNegotiation = ETH_AUTONEGOTIATION_ENABLE;
+  heth.Init.AutoNegotiation = ETH_AUTONEGOTIATION_DISABLE;
+  heth.Init.DuplexMode = ETH_MODE_FULLDUPLEX;
+  heth.Init.Speed = ETH_SPEED_100M;
   heth.Init.PhyAddress = KSZ8081RNDCA_PHY_ADDRESS;
   MACAddr[0] = 0xAA;
   MACAddr[1] = 0xBB;
@@ -223,6 +226,11 @@ static void low_level_init(struct netif *netif)
     
   /* USER CODE END MACADDRESS */
 
+  /* Setup PHY xtal to 25MHz */
+  HAL_ETH_MspInit(&heth);
+  HAL_ETH_ReadPHYRegister(&heth, 0x1f, &val);
+  HAL_ETH_WritePHYRegister(&heth, 0x1f, (val | (1<<7)));
+
   hal_eth_init_status = HAL_ETH_Init(&heth);
 
   if (hal_eth_init_status == HAL_OK)
@@ -230,6 +238,11 @@ static void low_level_init(struct netif *netif)
     /* Set netif link flag */  
     netif->flags |= NETIF_FLAG_LINK_UP;
   }
+
+  /* Setup PHY xtal to 25MHz */
+  HAL_ETH_ReadPHYRegister(&heth, 0x1f, &val);
+  HAL_ETH_WritePHYRegister(&heth, 0x1f, (val | (1<<7)));
+
   /* Initialize Tx Descriptors list: Chain Mode */
   HAL_ETH_DMATxDescListInit(&heth, DMATxDscrTab, &Tx_Buff[0][0], ETH_TXBUFNB);
      
