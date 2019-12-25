@@ -50,3 +50,11 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Build files
+/build/
+
+# IDE files
+/.vscode/
+/.mxproject
+/*.ioc
