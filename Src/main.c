@@ -71,7 +71,7 @@ void StartNetTask(void *argument);
   * @brief  The application entry point.
   * @retval int
   */
-int main(void)
+int mainfunc(void)
 {
   /* USER CODE BEGIN 1 */
 
